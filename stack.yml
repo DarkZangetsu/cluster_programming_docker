@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  mon_app:
+    image: task_image
+    deploy:
+      replicas: 4
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        failure_action: continue
+    networks:
+      - my_network
+    environment:
+      - REPLICA_ID={{.Task.Slot}}  # ID unique du réplica
+      - REDIS_HOST=redis  # Adresse du serveur Redis
+
+  redis:
+    image: redis:alpine
+    networks:
+      - my_network
+
+networks:
+  my_network:
